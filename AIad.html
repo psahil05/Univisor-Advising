@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scholar.AI - Your Intelligent Academic Advisor</title>
+  <style>
+    :root {
+      --primary: #4a6fa5;
+      --primary-light: #6b8cb8;
+      --primary-dark: #345784;
+      --accent: #ff8a5b;
+      --light: #f9f9f9;
+      --dark: #2d3748;
+      --gray: #718096;
+      --success: #48bb78;
+      --warning: #ecc94b;
+      --danger: #e53e3e;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 260px;
+      background-color: var(--primary);
+      color: white;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .logo-icon {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-item:hover {
+      background-color: var(--primary-light);
+    }
+    .nav-item.active {
+      background-color: var(--primary-dark);
+    }
+    .nav-icon {
+      margin-right: 12px;
+      font-size: 1.2rem;
+    }
+    .profile {
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      padding: 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      color: white;
+      font-weight: bold;
+    }
+    .main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .search-container {
+      position: relative;
+      width: 40%;
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1rem 0.8rem 2.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+    }
+    .notification {
+      background-color: white;
+      padding: 0.5rem;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .notification-dot {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      background-color: var(--danger);
+      border-radius: 50%;
+    }
+    .content {
+      display: flex;
+      gap: 2rem;
+      flex: 1;
+    }
+    .assistant-section {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+    }
+    .assistant-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .assistant-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+    }
+    .assistant-title h2 {
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .assistant-title p {
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+    .assistant-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+    .message {
+      margin-bottom: 1rem;
+      max-width: 80%;
+    }
+    .message.user {
+      margin-left: auto;
+      background-color: var(--primary-light);
+      color: white;
+      border-radius: 12px 12px 0 12px;
+      padding: 0.8rem 1rem;
+    }
+    .message.assistant {
+      background-color: #f1f5f9;
+      border-radius: 12px 12px 12px 0;
+      padding: 0.8rem 1rem;
+    }
+    .input-container {
+      display: flex;
+      background-color: #f1f5f9;
+      border-radius: 8px;
+      padding: 0.5rem;
+    }
+    .chat-input {
+      flex: 1;
+      border: none;
+      background-color: transparent;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .chat-input:focus {
+      outline: none;
+    }
+    .send-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .send-btn:hover {
+      background-color: var(--primary-dark);
+    }
+    .sidebar-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    /* Additional styles for calendar, courses, and tasks */
+    .calendar-card, .courses-card, .tasks-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      padding: 1.5rem;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    .calendar-body {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .calendar-day {
+      text-align: center;
+      padding: 0.4rem 0;
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+    .calendar-date {
+      text-align: center;
+      padding: 0.4rem 0;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .calendar-date:hover {
+      background-color: #f1f5f9;
+    }
+    .calendar-date.today {
+      background-color: var(--primary);
+      color: white;
+    }
+    .calendar-date.has-event {
+      border-bottom: 2px solid var(--accent);
+    }
+    .calendar-events {
+      margin-top: 0.5rem;
+    }
+    .course-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      padding: 0.6rem;
+      border-radius: 8px;
+      background-color: #f1f5f9;
+    }
+    .course-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+    .course-info {
+      flex: 1;
+    }
+    .course-name {
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+    .course-time {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+    .course-status {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      background-color: var(--success);
+      color: white;
+    }
+    .task-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .task-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--gray);
+      border-radius: 4px;
+      margin-right: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .task-checkbox.checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    .task-info {
+      flex: 1;
+    }
+    .task-name {
+      font-weight: 500;
+      margin-bottom: 0.2rem;
+    }
+    .task-due {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+    .task-priority {
+      display: flex;
+      align-items: center;
+    }
+    .priority-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+    .priority-high {
+      background-color: var(--danger);
+    }
+    .priority-medium {
+      background-color: var(--warning);
+    }
+    .priority-low {
+      background-color: var(--success);
+    }
+    .add-btn {
+      background-color: transparent;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 0.2rem;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    .add-btn:hover {
+      background-color: #f1f5f9;
+    }
+    @media (max-width: 1024px) {
+      .content {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 80px;
+        padding: 1rem 0.5rem;
+      }
+      .logo span, .nav-item span, .profile-info {
+        display: none;
+      }
+      .nav-icon, .logo-icon {
+        margin-right: 0;
+        font-size: 1.5rem;
+      }
+      .nav-item, .logo {
+        justify-content: center;
+      }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">
+      <i class="fas fa-graduation-cap logo-icon"></i>
+      <span>Scholar.AI</span>
+    </div>
+    <div class="nav-item active">
+      <i class="fas fa-home nav-icon"></i>
+      <span>Dashboard</span>
+    </div>
+    <div class="nav-item">
+      <i class="fas fa-calendar-alt nav-icon"></i>
+      <span>Schedule</span>
+    </div>
+    <div class="nav-item">
+      <i class="fas fa-book nav-icon"></i>
+      <span>Courses</span>
+    </div>
+    <div class="nav-item">
+      <i class="fas fa-tasks nav-icon"></i>
+      <span>Tasks</span>
+    </div>
+    <div class="nav-item">
+      <i class="fas fa-chart-line nav-icon"></i>
+      <span>Progress</span>
+    </div>
+    <div class="nav-item">
+      <i class="fas fa-cog nav-icon"></i>
+      <span>Settings</span>
+    </div>
+    <div class="profile">
+      <div class="profile-pic">JS</div>
+      <div class="profile-info">
+        <div>Jane Smith</div>
+        <small>Computer Science</small>
+      </div>
+    </div>
+  </div>
+  
+  <div class="main">
+    <div class="header">
+      <h1>Dashboard</h1>
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" placeholder="Search for courses, tasks, or resources..." />
+      </div>
+      <div class="notification">
+        <i class="fas fa-bell"></i>
+        <div class="notification-dot"></div>
+      </div>
+    </div>
+    
+    <div class="content">
+      <div class="assistant-section">
+        <div class="assistant-header">
+          <div class="assistant-avatar">
+            <i class="fas fa-robot" style="color: white;"></i>
+          </div>
+          <div class="assistant-title">
+            <h2>Academic Advisor AI</h2>
+            <p>Ask me anything about your courses, schedule, or academic planning</p>
+          </div>
+        </div>
+        
+        <div class="assistant-card">
+          <div class="chat-container" id="chat-container">
+            <div class="message assistant">
+              Hello Jane! I notice you have a midterm coming up in CS 301 next week. Would you like me to help you create a study plan or find available tutoring resources?
+            </div>
+            <div class="message user">
+              Yes, I definitely need help with that. I'm struggling with the algorithms section.
+            </div>
+            <div class="message assistant">
+              I understand. Based on your previous performance and learning patterns, I recommend focusing on graph algorithms first. There's a study group meeting tomorrow at 4PM in the CS building that covers exactly that topic. Would you like me to add it to your schedule?
+              <br /><br />
+              I can also recommend these resources:
+              <br />1. Professor Miller's recorded lecture on dynamic programming
+              <br />2. The practice problems from Chapters 8-10
+              <br />3. A tutoring session with Alex, who has high ratings for explaining algorithms
+            </div>
+            <div class="message user">
+              That's perfect. Please add the study group to my schedule, and I'd like to book a session with Alex if possible.
+            </div>
+            <div class="message assistant">
+              Great! I've added the study group to your schedule for tomorrow at 4PM in CS Building Room 302. I've also checked Alex's availability and booked you a 1-hour session on Monday at 2PM.
+              <br /><br />
+              Looking at your overall schedule, I've identified a 3-hour block on Sunday afternoon that would be ideal for reviewing the practice problems. Would you like me to block that time for focused study?
+            </div>
+          </div>
+          
+          <div class="input-container">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Ask about courses, deadlines, study resources..." />
+            <button class="send-btn" id="send-btn">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="calendar-card">
+          <div class="card-header">
+            <div class="card-title">February 2025</div>
+            <div>
+              <button class="add-btn">
+                <i class="fas fa-chevron-left"></i>
+              </button>
+              <button class="add-btn">
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="calendar-body">
+            <div class="calendar-day">Sun</div>
+            <div class="calendar-day">Mon</div>
+            <div class="calendar-day">Tue</div>
+            <div class="calendar-day">Wed</div>
+            <div class="calendar-day">Thu</div>
+            <div class="calendar-day">Fri</div>
+            <div class="calendar-day">Sat</div>
+            
+            <!-- Dates -->
+            <div class="calendar-date">26</div>
+            <div class="calendar-date">27</div>
+            <div class="calendar-date">28</div>
+            <div class="calendar-date">29</div>
+            <div class="calendar-date">30</div>
+            <div class="calendar-date">31</div>
+            <div class="calendar-date">1</div>
+            
+            <div class="calendar-date">2</div>
+            <div class="calendar-date">3</div>
+            <div class="calendar-date">4</div>
+            <div class="calendar-date">5</div>
+            <div class="calendar-date">6</div>
+            <div class="calendar-date">7</div>
+            <div class="calendar-date">8</div>
+            
+            <div class="calendar-date">9</div>
+            <div class="calendar-date">10</div>
+            <div class="calendar-date">11</div>
+            <div class="calendar-date">12</div>
+            <div class="calendar-date">13</div>
+            <div class="calendar-date">14</div>
+            <div class="calendar-date">15</div>
+            
+            <div class="calendar-date">16</div>
+            <div class="calendar-date">17</div>
+            <div class="calendar-date">18</div>
+            <div class="calendar-date">19</div>
+            <div class="calendar-date">20</div>
+            <div class="calendar-date">21</div>
+            <div class="calendar-date">22</div>
+            
+            <div class="calendar-date">23</div>
+            <div class="calendar-date">24</div>
+            <div class="calendar-date">25</div>
+            <div class="calendar-date">26</div>
+            <div class="calendar-date">27</div>
+            <div class="calendar-date today has-event">28</div>
+            <div class="calendar-date">1</div>
+          </div>
+          
+          <div class="calendar-events">
+            <div style="font-size: 0.8rem; color: var(--gray);">Today, February 28</div>
+            <div style="font-weight: 500; margin-top: 0.3rem;">3 events scheduled</div>
+          </div>
+        </div>
+        
+        <div class="courses-card">
+          <div class="card-header">
+            <div class="card-title">Today's Classes</div>
+            <button class="add-btn">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+          </div>
+          
+          <div class="courses-list">
+            <div class="course-item">
+              <div class="course-color" style="background-color: var(--primary);"></div>
+              <div class="course-info">
+                <div class="course-name">CS 301: Algorithms</div>
+                <div class="course-time">10:00 AM - 11:30 AM</div>
+              </div>
+              <div class="course-status">In Progress</div>
+            </div>
+            
+            <div class="course-item">
+              <div class="course-color" style="background-color: var(--accent);"></div>
+              <div class="course-info">
+                <div class="course-name">MATH 201: Linear Algebra</div>
+                <div class="course-time">1:00 PM - 2:30 PM</div>
+              </div>
+            </div>
+            
+            <div class="course-item">
+              <div class="course-color" style="background-color: var(--success);"></div>
+              <div class="course-info">
+                <div class="course-name">PHYS 101: Mechanics</div>
+                <div class="course-time">3:00 PM - 4:30 PM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tasks-card">
+          <div class="card-header">
+            <div class="card-title">Upcoming Tasks</div>
+            <button class="add-btn">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          
+          <div class="tasks-list">
+            <div class="task-item">
+              <div class="task-checkbox checked">
+                <i class="fas fa-check" style="color: white; font-size: 0.7rem;"></i>
+              </div>
+              <div class="task-info">
+                <div class="task-name">Submit Research Proposal</div>
+                <div class="task-due">Due today</div>
+              </div>
+              <div class="task-priority">
+                <div class="priority-dot priority-high"></div>
+              </div>
+            </div>
+            
+            <div class="task-item">
+              <div class="task-checkbox"></div>
+              <div class="task-info">
+                <div class="task-name">CS 301 Assignment 4</div>
+                <div class="task-due">Due in 2 days</div>
+              </div>
+              <div class="task-priority">
+                <div class="priority-dot priority-medium"></div>
+              </div>
+            </div>
+            
+            <div class="task-item">
+              <div class="task-checkbox"></div>
+              <div class="task-info">
+                <div class="task-name">Study for Midterm Exam</div>
+                <div class="task-due">Due in 5 days</div>
+              </div>
+              <div class="task-priority">
+                <div class="priority-dot priority-high"></div>
+              </div>
+            </div>
+            
+            <div class="task-item">
+              <div class="task-checkbox"></div>
+              <div class="task-info">
+                <div class="task-name">Group Project Meeting</div>
+                <div class="task-due">Due in 7 days</div>
+              </div>
+              <div class="task-priority">
+                <div class="priority-dot priority-low"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Toggle task checkbox
+      const checkboxes = document.querySelectorAll('.task-checkbox');
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('click', function() {
+          this.classList.toggle('checked');
+          if (this.classList.contains('checked')) {
+            this.innerHTML = '<i class="fas fa-check" style="color: white; font-size: 0.7rem;"></i>';
+          } else {
+            this.innerHTML = '';
+          }
+        });
+      });
+      
+      // Calendar date selection
+      const dates = document.querySelectorAll('.calendar-date');
+      dates.forEach(date => {
+        date.addEventListener('click', function() {
+          dates.forEach(d => d.classList.remove('today'));
+          this.classList.add('today');
+        });
+      });
+      
+      // Chat functionality: send message and display response from backend
+      const chatInput = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-btn');
+      const chatContainer = document.getElementById('chat-container');
+      
+      function sendMessage() {
+        if (chatInput.value.trim() !== '') {
+          const messageText = chatInput.value;
+          
+          // Append user's message to chat container
+          const userMessage = document.createElement('div');
+          userMessage.classList.add('message', 'user');
+          userMessage.textContent = messageText;
+          chatContainer.appendChild(userMessage);
+          
+          // Clear input field
+          chatInput.value = '';
+          
+          // Scroll to bottom
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+          
+          // Call the backend /chat endpoint
+          fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: messageText })
+          })
+          .then(response => response.json())
+          .then(data => {
+            const aiMessage = document.createElement('div');
+            aiMessage.classList.add('message', 'assistant');
+            aiMessage.textContent = data.response;
+            chatContainer.appendChild(aiMessage);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+        }
+      }
+      
+      sendBtn.addEventListener('click', sendMessage);
+      chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
